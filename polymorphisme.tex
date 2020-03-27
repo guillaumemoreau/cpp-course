@@ -1,0 +1,391 @@
+% % polymorphisme
+
+\begin{frame}{Rappels : les classes}
+\begin{itemize}
+	\item La réutilisation est un aspect important de l'héritage, mais pas forcément le plus important !
+	\item Le deuxième point fondamental est la relation qui lie une classe à sa super-classe :
+	\begin{itemize}
+		\item une classe $B$ qui hérite de la classe $A$ peut être vue comme un \textbf{sous-type} (sous-ensemble) du type défini par la classe $A$
+	\end{itemize}
+\end{itemize}
+%% insérer ici un exemple : un étudiant sportif est une sorte d'étudiant
+\end{frame}
+
+\subsection{Surclassement}
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]\frametitle{Surclassement}
+\begin{itemize}
+	\item Tout objet instance de la classe $B$ peut aussi être vu comme une instance de la classe $A$
+	\item Cette relation est directement supportée par le langage C++
+	\begin{itemize}
+		\item à une référence de type $A$, il est possible d'affecter une valeur qui est une référence vers un objet de type $B$ (surclassement ou upcasting)
+		\item plus généralement, à une référence d'un type donné, il est possible d'affecter une valeur qui correspond à une référence dont le type effectif est n'importe quelle sous-classe du type de la référence
+	\end{itemize}
+	\item Exemple : en supposant définie une classe \textit{Etudiant} dérivant d'une classe \textit{Personne}, on peut écrire
+	\begin{lstlisting}
+	Personne *p = new Etudiant();
+	\end{lstlisting}
+	\item Pourquoi utiliser des pointeurs ici ?
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Le problème}
+\begin{itemize}
+\item Déclaration d'une fonction d'affichage
+\begin{lstlisting}
+void afficher(exheritageA a);
+\end{lstlisting}
+\item Définition de la fonction
+\begin{lstlisting}
+void afficher(exheritageA a) {
+    a.affiche();
+}
+\end{lstlisting}
+\item Utilisation
+\begin{lstlisting}
+    afficher(a);
+    afficher(b);
+    afficher(c);
+\end{lstlisting}
+\pause\begin{block}{Résultat}
+{\tiny
+\begin{verbatim}
+je suis un objet de la classe exheritageA
+je suis un objet de la classe exheritageA
+je suis un objet de la classe exheritageA
+\end{verbatim}
+}
+\end{block}
+\pause
+\item Explication : passage par valeur $\Longrightarrow$ copie de l'objet
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Le problème (suite)}
+\begin{itemize}
+\item Passons par un pointeur !
+\item Déclaration de la nouvelle fonction
+\begin{lstlisting}
+void afficherPtr(exheritageA *a);
+\end{lstlisting}
+\item Définition de la fonction
+\begin{lstlisting}
+void afficherPtr(exheritageA *a) {
+    a->affiche();
+}
+\end{lstlisting}
+\item Utilisation
+\begin{lstlisting}
+    afficherPtr(&a);
+    afficherPtr(&b);
+    afficherPtr(&c);
+\end{lstlisting}
+\pause\begin{block}{Résultat}
+{\tiny
+\begin{verbatim}
+je suis un objet de la classe exheritageA
+je suis un objet de la classe exheritageA
+je suis un objet de la classe exheritageA
+\end{verbatim}
+}
+\end{block}
+\pause
+\item Insuffisant (en C++) : notion de fonction \textit{virtuelle} nécessaire
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Fonction virtuelle}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Syntaxe très simple
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    il suffit d'ajouter le préfixe \emph{virtual} dans la
+    \textbf{déclaration} de la classe mère
+  \item
+    pas obligatoire dans les classes filles et les méthodes redéfinies
+
+    \begin{itemize}
+    \itemsep1pt\parskip0pt\parsep0pt
+    \item
+      mais cela ne fait pas de mal à la compréhension du code
+    \end{itemize}
+  \item
+    NB : pour ceux qui connaissent java, toutes les fonctions sont
+    virtuelles en java
+  \end{itemize}
+\item
+  Signification
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    La résolution \emph{statique} des liens est remplacée par une
+    résolution \emph{dynamique}
+  \item
+    Si on utilise des fonctions virtuelles \textbf{et} des
+    pointeurs/références vers un objet, alors la méthode appelée sera
+    celle du type réel de l'objet
+  \end{itemize}
+\item
+  Ca sera plus clair sur un exemple !
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    Reprise de l'exemple précédent en rendant affiche() virtuelle
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exemple simpliste}
+\begin{itemize}
+\item Seule modification : la déclaration de \textit{affiche()} dans \textit{exheritageA}
+\begin{lstlisting}
+    virtual void affiche();
+\end{lstlisting}
+\item Utilisation inchangée
+\begin{lstlisting}
+    afficher(a);
+    afficher(b);
+    afficher(c);
+    
+    afficherPtr(&a);
+    afficherPtr(&b);
+    afficherPtr(&c);
+\end{lstlisting}
+\pause
+{\tiny
+\begin{verbatim}
+je suis un objet de la classe exheritageA
+je suis un objet de la classe exheritageA
+je suis un objet de la classe exheritageA
+je suis un objet de la classe exheritageA
+je suis un objet de la classe exheritageB
+je suis un objet de la classe exheritageA
+je suis un objet de la classe exheritageC
+\end{verbatim}
+}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Surclassement bis}
+\begin{itemize}
+	\item Lorsqu'un objet est surclassé, il est vu comme un objet du type de la référence utilisée pour le désigner
+	\item Ses fonctionnalités sont alors limitées à celle du type de la référence
+	\item Résolution des messages :
+	\begin{itemize}
+		\item Que se passe-t-il si on appelle une méthode (virtuelle) surchargée ?
+		\item c'est bien la méthode du type <<réel>> de la référence qui est appelée, telle qu'elle est définie au niveau de la classe
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,containsverbatim]
+\frametitle{Exemple : limitation de fonctionnalités}
+\begin{itemize}
+\item on ajoute à \emph{exheritageC}
+\begin{lstlisting}
+public void methodeSupplementaire() {
+  // ne fait rien
+}
+\end{lstlisting}
+\item dans le \texttt{main()} :
+\end{itemize}
+\begin{lstlisting}
+    exheritageA *ptrC = &c;
+    ptrC->affiche();
+    ptrC->methodeSupplementaire();
+\end{lstlisting}
+\begin{block}{Exécution}
+{\tiny \begin{verbatim}
+exheritage.cxx:59:11: error: no member named 'methodeSupplementaire' in 'exheritageA'
+    ptrC->methodeSupplementaire();
+    ~~~~  ^
+1 error generated.
+\end{verbatim}}
+\end{block}
+\end{frame}
+
+\begin{frame}{Liaison dynamique (uniquement méthodes \textit{virtuelles})}
+\begin{itemize}
+	\item Les messages sont résolus à l'exécution
+	\begin{itemize}
+		\item La méthode exécutée est déterminée à l'exécution (run-time) et non pas à la compilation
+		\item à cet instant (et seulement à cet instant), le type exact de l'objet qui reçoit le message est connu
+		\item ce mécanisme est connu sous le nom de \textbf{liaison dynamique} ou dynamic binding ou encore late-binding voire run-time binding
+	\end{itemize}
+	\item A la compilation, seules les vérifications statiques sont effectuées (signature)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Vérification statique insuffisante}
+\begin{itemize}
+	\item à la compilation il n'est \alrt{pas possible} de déterminer le type exact de l'objet qui reçoit le message
+	\item la vérification statique garantit simplement dès la compilation que les messages pourront être résolus
+\end{itemize}
+\begin{codeblock}{La preuve !}
+\begin{lstlisting}
+    exheritageA *ex[100];
+    for (int i=0 ; i<100 ; i++) {
+        int z = rand() % 100;
+        if (z > 50) {
+            ex[i] = new exheritageB();
+            
+        }
+        else {
+            ex[i] = new exheritageC();
+        }
+        ex[i]->affiche();
+    }
+\end{lstlisting}
+\end{codeblock}
+\end{frame}
+
+\begin{frame}{Cas particulier : constructeurs et destructeurs}
+\begin{itemize}
+\item Les constructeurs ne peuvent pas être virtuels : 
+\begin{itemize}
+\item à la construction, on sait quel objet on va construire !
+\item il est également interdit de faire appel à une méthode virtuelle dans un constructeur
+\end{itemize}
+\item Le destructeur peut être rendu virtuel
+\begin{itemize}
+\item voire : le destructeur \alrt{devrait} être virtuel (lorsqu'on utilise le polymorphisme)
+\item sinon appel à \texttt{delete} sur un pointeur surclassé génère un appel au mauvais destructeur !
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsubsection{Exemple : comptes rémunérés}
+
+\begin{frame}{Exemple : comptes rémunérés}
+\begin{itemize}
+\item Il existe des comptes bancaires auxquels les banques apportent une rémunération
+\begin{itemize}
+\item Par exemple, les livrets bancaires bénéficient d'une rémunération annuelle\footnote{calculée tous les 15j, mais non considéré ici}
+\item Mais il existe aussi des comptes courants rémunérés qui bénéficient d'intérêts pour lorsque le solde d'un compte dépasse un certain seuil
+\end{itemize}
+\item Point commun : ils ont tous une fonction de calcul de rémunération du compte
+\item Souhait de l'agence : Pour chaque compte, appeler la fonction de rémunération du compte
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Architecture de la solution}
+\begin{itemize}
+\item Une classe mère commune à tous les comptes rémunérés (qui dérive elle-même de \textit{compte})
+\begin{itemize}
+\item Elle comporte une méthode de calcul des intérêts qui ne fait rien
+\end{itemize}
+\item Une classe \textit{livret} qui hérite de la classe précédente et qui implémente sa propre version du calcul d'intérêts
+\item Une classe \textit{compte courant rémunéré} qui fait de même
+\item Une agence bancaire contient une liste de comptes rémunérés (de tous types)
+\begin{itemize}
+\item polymorphisme : pour chaque compte rémunéré, on peut appeler la méthode de calcul appropriée
+\item C++ : nécessité d'utiliser des pointeurs dans la liste et des méthodes virtuelles
+\end{itemize}
+\item pour aller plus loin : \hyperlink{secabstract}{\beamergotobutton{classes abstraites}}, \hyperlink{sectypeid}{\beamergotobutton{introspection}}, \hyperlink{secstl}{\beamergotobutton{librairie standard}}
+\end{itemize}
+% @TODO1908 : corriger les liens vers les sections
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exemple : déclaration des classes}
+\begin{codeblock}{Classe \textit{compteremun}}
+\begin{lstlisting}
+class compteremun : public compte {
+public:
+    virtual void calc_interets();
+    compteremun(int n);
+};
+\end{lstlisting}
+\end{codeblock}
+
+\begin{codeblock}{Classes \textit{livret} et \textit{ccourantremun}}
+\begin{lstlisting}
+class livret : public compteremun {
+protected:
+    float tauxannuel;
+public:
+    virtual void calc_interets();   
+    livret(int n,float t);
+};
+
+class ccourantremun : public compteremun {
+protected:
+    float tauxquotidien;
+    float seuil;
+public:
+    virtual void calc_interets();   
+    ccourantremun(int n,float t,float s);
+};
+\end{lstlisting}
+\end{codeblock}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Exemple : définition des méthodes}
+\begin{lstlisting}
+void compteremun::calc_interets() {
+    // do noting
+}
+
+compteremun::compteremun(int n) : compte(n) {
+    // do nothing
+}
+
+void livret::calc_interets() {
+    solde += solde*(1.0+tauxannuel);
+}
+
+livret::livret(int n,float t) : compteremun(n) {
+    tauxannuel = t;
+}
+
+ccourantremun::ccourantremun(int n,float t,float s) : compteremun(n) {
+    tauxquotidien = t;
+    seuil = s;
+}
+
+void ccourantremun::calc_interets() {
+    if (solde > seuil) {
+        solde += (solde-seuil)*(1.0+tauxquotidien);
+    }
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Exemple : calcul des intérêts}
+\begin{codeblock}{Liste de comptes}
+\begin{lstlisting}
+    list<compteremun*> agence;
+    agence.push_back(new livret(1,0.03));
+    agence.push_back(new ccourantremun(1,0.001,1500.0));
+\end{lstlisting}
+\end{codeblock}
+
+\begin{codeblock}{Calcul des intérêts}
+\begin{lstlisting}
+    for (list<compteremun*>::iterator i=agence.begin() ; i != agence.end(); i++) {
+        (*i)->calc_interets();
+    }
+\end{lstlisting}
+\end{codeblock}
+
+\begin{itemize}
+\item \alert{Problème} : la méthode \verb!compteremun::calc_interets()! qui ne fait rien, on aimerait
+\begin{itemize}
+\item Forcer la redéfinition d'une méthode dans la classe fille et interdire l'instanciation de \textit{compteremun}
+\end{itemize}
+\item \structure{Solution} : les classes et méthodes abstraites
+\end{itemize}
+\end{frame}

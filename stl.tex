@@ -1,0 +1,859 @@
+% la STL
+
+\begin{frame}{Introduction}
+\label{secstl}
+\begin{itemize}
+\item \hypertarget{pdf:stl}{Un} langage de programmation a besoin d'une bibliothèque d'interaction avec le système
+\begin{itemize}
+\item On ne peut pas se contenter de faire tourner des algorithmes en rond sans entrées/sorties
+\item Et même pour écrire des algorithmes, on ne veut pas (mal) réinventer la roue à chaque fois
+\end{itemize}
+\item Les fonctions livrées avec C++ ont longtemps été le parent pauvre du langage (notamment par rapport à Java)
+\item Pire, dans les anciennes versions C++ (i.e. avant la normalisation), on trouvait des bibliothèques (très) variables
+\item On s'intéresse à la version normalisée C++11 de la \textit{SL}
+\begin{itemize}
+\item pas de doc officielle d'utilisation, juste une description fonctionnelle dans la norme...
+\item Néanmoins, très bonne doc : \url{http://www.cplusplus.com/reference/}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Contenu}
+\begin{itemize}
+\item 3 grandes parties dans la \textit{SL}
+\begin{itemize}
+\item Un héritage du C (nécessaire)
+\item La STL (\textit{Standard Template Library}) et les flots
+\item Le reste (dont les \verb|string|, les \verb|namespace|)...
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{L'héritage du C}
+
+\begin{frame}[fragile]\frametitle{L'héritage du C}
+\begin{itemize}
+\item En C, on avait pris l'habitude de faire des \verb|#include <math.h>|
+\item En C++, on les remplace progressivement par \verb|#include <cmath>|
+\item On y ajoute parfois un \verb|using namespace std;|
+\begin{itemize}
+\item permet d'écrire \verb|sqrt(2)| au lieu de \verb|std::sqrt(2.0)|
+\end{itemize}
+\item Tout ce qui était utilisé en C est encore disponible sous cette nouvelle dénomination, mais pas forcément utile
+\end{itemize}
+\end{frame}
+
+\subsection{La STL}
+
+\begin{frame}{La STL}
+\begin{itemize}
+\item STL : Standard Template Library
+\item On parle aussi de bibliothèques de conteneurs (parce les structures fournies ne sont seront pas liées à un type donné)
+\item Correspond au \textit{Collection Framework} de java
+\begin{itemize}
+\item en beaucoup plus puissant
+\item et peut s'avérer beaucoup plus compliqué également...
+\end{itemize}
+\item Commençons par un exemple : le vecteur
+\begin{itemize}
+\item Alternative pratique aux tableaux standards du C
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Le conteneur \texttt{vector}}
+\begin{itemize}
+\item Les listes sont une des abstractions les plus utiles en programmation
+\begin{itemize}
+\item Que faire avec ? créer, parcourir, rechercher, ajouter, supprimer...
+\end{itemize}
+\item Toujours les mêmes algorithmes quel que soit le type d'éléments de la liste
+\item Structure et algorithmes universels : réutiliser ce qui a déjà été (bien) écrit (et testé)
+\item C++ fournit la structure \verb|vector<type>| où \verb|type| est à remplacer par un type de données
+\begin{itemize}
+\item  \verb|vector<int>| pour un vecteur d'entiers
+\item \verb|vector<forme>| pour un vecteur de formes
+\item \verb|vector<forme*>| pour un vecteur de pointeurs sur des formes
+\item \verb|vector<vector<float> >| pour une vecteur de vecteurs de réels
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Exemple d'utilisation de \texttt{vector}}
+\begin{lstlisting}
+#include <vector>
+#include <iostream>
+using namespace std;
+
+int main() {
+    vector<int> v1;
+    v1.push_back(5);
+    v1.push_back(8);
+    for (int i(0) ; i<8 ; i++) {
+        v1.push_back(i);
+    }
+    cout << "taille : " << v1.size() << endl;
+
+    for (int i(0) ; i<v1.size() ; i++) {
+        cout << v1[i] << endl;
+    }
+
+    // syntaxe alternative
+    for (int& x : v1) {
+        cout << x << endl;
+
+    }
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Conteneurs pour les structures linéaires}
+\begin{itemize}
+\item Rappel : suivant la structure interne utilisée (liste chaînée ou tableau par exemple), une structure linéaire est plus ou moins efficace selon les opérations
+\item C++ met à disposition 2 grands types de structures linéaires qui s'utilisent en grande partie de façon identique
+\begin{itemize}
+\item Les séquences
+\begin{itemize}
+\item \verb|vector| \urldoc{http://www.cplusplus.com/reference/vector/vector/} : tableau classique
+\item \verb|deque| \urldoc{http://www.cplusplus.com/reference/deque/deque/} : liste doublement chaînée (\textit{double ended queue})
+\item \verb|list| \urldoc{http://www.cplusplus.com/reference/list/list/} : conteneur générique pour l'utilisation des itérateurs
+\item \verb|stack| \urldoc{http://www.cplusplus.com/reference/stack/} : pile
+\item \verb|queue| \urldoc{http://www.cplusplus.com/reference/queue/} : file (structure FIFO)
+\item \verb|priority_queue| \urldoc{http://www.cplusplus.com/reference/queue/priority_queue/} : file avec priorité (suppose des éléments comparables)
+\end{itemize}
+\item Les tableaux associatifs
+\begin{itemize}
+\item \texttt{set} \urldoc{http://www.cplusplus.com/reference/set/set/}
+\item \texttt{multiset} \urldoc{http://www.cplusplus.com/reference/set/multiset/}
+\item \texttt{map} \urldoc{http://www.cplusplus.com/reference/map/map/}
+\item \texttt{multimap} \urldoc{http://www.cplusplus.com/reference/map/multimap/}
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Utilisation la plus commune possible}
+\begin{itemize}
+\item C++ essaie au maximum de faciliter l'utilisation des conteneurs
+\begin{itemize}
+\item inclusion : \verb|#include <conteneur>|
+\item quelques méthodes communes
+\begin{itemize}
+\item \verb|empty()|
+\item \verb|size()|
+\item \verb|clear()|
+\end{itemize}
+\item Utilisation maximale de la surcharge des opérateurs (vu pour l'accès à des éléments d'un vecteur)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsubsection{Les séquences}
+
+\begin{frame}[fragile]\frametitle{Retour sur les vecteurs}
+\begin{itemize}
+\item Documentation : \url{http://www.cplusplus.com/reference/vector/vector/}
+\item Accès aux éléments
+\begin{itemize}
+\item \verb|operator[]()| pour les accès type tableau
+\item \verb|push_back()| pour ajouter à la fin
+\item \verb|pop_back()| pour récupérer le dernier élément et l'enlever
+\item \verb|front()| premier élément
+\item \verb|back()| dernier élément
+\end{itemize}
+\item En réalité, ces méthodes sont communes à toutes les classes de séquence
+\end{itemize}
+\end{frame}
+
+\subsubsection{Les tableaux associatifs}
+
+\begin{frame}{Les tableaux associatifs}
+\begin{itemize}
+\item Dans un \texttt{vector}, les éléments sont accessibles via l'opérateur \texttt{[]} et leur indice qui est un nombre entier
+\item On n'a pas toujours besoin d'un indice entier (exemple : dictionnaire)
+\item Les tableaux associatifs généralisent la notion de tableau en permettant l'utilisation de n'importe quel type comme indice
+\begin{itemize}
+\item Déclaration : \texttt{map<}\textit{clé}\texttt{,}\textit{valeur}\texttt{>} \urldoc{http://www.cplusplus.com/reference/map/map/}
+\item Le type de clé doit être ordonné
+\end{itemize}
+\item On parle d'association (\textit{map} en anglais) car à une clé  est associée une valeur \textbf{unique}
+\item C'est une notion très courante dans les langages du web comme PhP
+\item Les méthodes d'accès sont en ${\cal O}(\log n)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Utilisation des \texttt{map}}
+\begin{itemize}
+\item \verb|m.count(key)| : renvoie 1 si la clé est présente, 0 sinon
+\item \verb|m.find(key)| : renvoie un itérateur vers la clé ou \verb|m.end()| sinon
+\item \verb|m.at(key)| : renvoie la valeur associée  ou exception \verb|out_of_range|
+\item \verb|m[key]| : renvoie la valeur associée ou une référence vers une nouvelle valeur
+\end{itemize}
+\begin{codeblock}{Exemple d'utilisation}
+\begin{lstlisting}
+    map<string,string> dict;
+    dict["banane"] = "banana";
+    dict["poire"] = "pear" ;
+    dict["pomme"] = "apple";
+    cout << (dict.count("cerise")>0 ? "trouve" : "pas trouve") << endl;
+    cout << dict.size() << endl;
+    cout << dict["framboise"] << endl;
+    cout << dict.size() << endl;
+\end{lstlisting}
+\end{codeblock}
+\begin{exampleblock}{Résultat}
+{\tiny
+\begin{verbatim}
+pas trouve
+3
+
+4
+\end{verbatim}
+}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Autres conteneurs associatifs}
+\begin{itemize}
+\item Ils s'utilisent de la même manière
+\item Quelques propriétés particulières de chaque type
+\begin{itemize}
+\item Les \verb|set| \urldoc{http://www.cplusplus.com/reference/set/set/} sont utilisés pour représenter les ensembles, au sens mathématique (insertion et recherche, pas d'accès via []). Fusion valeur/clé en quelque sorte
+\item Les \verb|multiset| \urldoc{http://www.cplusplus.com/reference/set/multiset/} sont des ensembles où une valeur peut apparaître plusieurs fois
+\item Les \verb|multimap| \urldoc{http://www.cplusplus.com/reference/map/multimap/} sont des \verb|map| où une même clé peut apparaître plusieurs fois
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsubsection{Les itérateurs}
+
+\begin{frame}[fragile]\frametitle{Les itérateurs}
+\begin{itemize}
+\item Souvenirs de C : le parcours d'une liste se fait en
+\begin{itemize}
+\item incrémentant un indice $i$ dans le cas d'un tableau
+\item en faisant avancer un \textit{pointeur courant} dans le cas d'une liste chaînée
+\begin{lstlisting}
+ptr = ptr->next;
+\end{lstlisting}
+\end{itemize}
+\item En première approximation, les itérateurs peuvent être vus comme des pointeurs sur les éléments des conteneurs
+\item En réalité, ce sont des objets complexes !
+\item Analogie avec le pointeur
+\begin{itemize}
+\item on le fait avancer avec \texttt{++} et reculer avec \texttt{--}
+\item on accède à l'élément via l'opérateur de déréférencement \texttt{*}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Utilisation}
+\begin{itemize}
+\item Déclaration : \textit{conteneur}\texttt{::iterator} \textit{nom}\texttt{;}
+\begin{lstlisting}
+vector<int> tab(5,5);
+vector<int>::iterator it;
+\end{lstlisting}
+\item Itération et utilisation
+\begin{lstlisting}
+int total = 0;
+for (it=tab.begin() ; it!=tab.end() ; it++) {
+  total += *it;
+}
+\end{lstlisting}
+\item où \verb|tab.begin()| renvoie un itérateur sur le début de la liste et \verb|tab.end()| un itérateur sur l'élément (invalide) qui suit juste le dernier élément
+\item Sur certains types de conteneurs (\verb|vector| et \verb|deque|), l'arithmétique de pointeurs est autorisée (\textit{random access iterators})
+\begin{lstlisting}
+    *(tab.begin()+3) = 2; // modification du 4eme element
+    cout << tab[3] << endl;
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Itérateurs et \texttt{list}}
+\begin{itemize}
+\item Les \verb|list| sont des structures de listes chaînées dont les éléments sont non contigus en mémoire
+\item Les itérateurs constituent le seul moyen d'accès au contenu
+\begin{lstlisting}
+    list<string> todo;
+    todo.push_back("repeindre la cuisine");
+    todo.push_back("finir le poly de C++");
+    todo.push_back("dormir");
+
+    for (list<string>::iterator i=todo.begin() ; i!=todo.end() ; ++i) {
+        cout << "TODO: " << *i << endl;
+    }
+\end{lstlisting}
+\item Syntaxe alternative (et réductrice)
+\begin{lstlisting}
+    for (string& s : todo) {
+        cout << "TODO: " << s << endl;
+
+    }
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Itérateurs et \texttt{map}}
+\begin{itemize}
+\item C'est un peu plus compliqué puisque les \verb|map| sont des paires $(key,value)$
+\item Ca se traduit en C++ par une classe \verb|pair<T,E>| (déclarées dans \verb|utility|) à deux attributs appelés \verb|first| et \verb|second|
+\item les itérateurs des \verb|map<T,E>| se déréférencent vers des \verb|pair<K,E>|
+\end{itemize}
+\begin{codeblock}{Utilisation}
+\begin{lstlisting}
+    for(map<string,string>::iterator itmap=dict.begin() ; itmap!=dict.end() ; ++itmap) {
+        cout << "dict[" << itmap->first << "] = " << itmap->second << endl;
+    }
+\end{lstlisting}
+\end{codeblock}
+\begin{block}{Résultat}
+{\tiny
+\begin{verbatim}
+dict[banane] = banana
+dict[framboise] =
+dict[poire] = pear
+dict[pomme] = apple
+\end{verbatim}
+}
+\end{block}
+\end{frame}
+
+% foncteurs et algorithmes
+
+\subsection{Foncteurs}
+
+\begin{frame}{Foncteurs}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  On aimerait pouvoir appliquer des algorithmes à des collections (au
+  sens de la STL)
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    on peut le faire en créant une fonction qui prend une collection en
+    paramètre
+  \item
+    l'inverse pourrait être pratique : passer la fonction elle-même
+    comme paramètre
+  \end{itemize}
+\item
+  C'est le principe des \structure{foncteurs}
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    On peut aussi utiliser aussi les pointeurs de fonction
+  \item
+    Un foncteur est une classe qui surcharge l'opérateur \texttt{()} qui effectue
+    l'opération souhaitée
+  \end{itemize}
+  \item Note hors sujet : c'est le principe des \textit{shaders}...
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Exemple simpliste}
+\begin{itemize}
+\item Création du foncteur
+\begin{codeblock}{Classe addition}
+\begin{lstlisting}
+class addition{
+public:
+    int operator()(int a, int b) {
+        return a+b;
+    }
+};
+\end{lstlisting}
+\end{codeblock}
+\begin{codeblock}{Utilisation}
+\begin{lstlisting}
+    addition foncteur;
+    cout << "2+4 = " << foncteur(2,4) << endl;
+\end{lstlisting}
+\end{codeblock}
+\begin{block}{Résultat}
+{\tiny
+\begin{verbatim}
+2+4 = 6
+\end{verbatim}}
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Exemple : valeur absolue}
+\begin{itemize}
+\item Création du foncteur
+\begin{codeblock}{Classe addition}
+\begin{lstlisting}
+class valeurabsolue {
+public:
+    int operator()(int a) {
+        if (a>=0) {
+            return a;
+        }
+        else {
+            return -a;
+        }
+    }
+};
+\end{lstlisting}
+\end{codeblock}
+\item On verra par la suite comment l'appliquer à une collection
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Plus complexe : remplir une collection avec des valeurs différentes}
+\begin{itemize}
+\item Les foncteurs sont des objets, ils peuvent avoir des attributs
+\item Exemple : un foncteur renvoie une valeur incrémentée à chaque appel
+\end{itemize}
+\begin{codeblock}{Classe fill}
+\begin{lstlisting}
+class myfill {
+private:
+    int m;
+public:
+    myfill(int i) : m(i) {}
+    int operator()() {
+        ++m;
+        return m;
+    }
+};
+\end{lstlisting}
+\end{codeblock}
+\begin{codeblock}{Utilisation}
+\begin{lstlisting}
+    myfill f(22);
+    for (vector<int>::iterator i=v1.begin() ; i!=v1.end() ; ++i) {
+        *i = f();
+    }
+\end{lstlisting}
+\end{codeblock}
+\end{frame}
+
+\begin{frame}{Les prédicats}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  les prédicats sont des expressions booléennes (vient de la logique)
+\item
+  En C++, ce sont des foncteurs particuliers renvoyant un booléen
+\item
+  Ils sont utilisés pour tester une valeur particulière d'un objet
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    nombre plus grand que 10
+  \item
+    cette chaîne contient-elle des voyelles ?
+  \item
+    Cet objet est-il encore valide ?
+  \end{itemize}
+\item
+  Ils seront très utiles dans les algorithmes de la STL
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Les foncteurs prédéfinis}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  La STL fournit un certain nombre de foncteurs
+\item
+  Ils sont déclarés dans \verb|functional| \urldoc{http://www.cplusplus.com/reference/functional/}
+  \item Ils sont paramétrés par un type (i.e. on peut choisir le type auquel ils s'appliquent)
+\item
+  On y trouve notamment
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    les opérateurs arithmétiques (\verb|plus<T>|)
+  \item
+    les opérateurs de comparaison (\verb|equal_to<T>|)
+  \item
+    les opérateurs logiques (\verb|logical_and<T>|)
+  \item
+    des adaptateurs et des convertisseurs
+  \item
+    d'autres choses encore...
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\subsection{Les algorithmes : lier conteneurs et foncteurs}
+
+\begin{frame}[fragile]\frametitle{Les algorithmes : lien entre conteneurs et foncteurs}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Par algorithme, on entend les fonctions définies dans \verb|algorithm| \urldoc{http://www.cplusplus.com/reference/algorithm/}
+\item
+  Ce sont des fonctions génériques qui prennent en argument des
+  conteneurs (ou du moins des itérateurs) et des foncteurs
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    elles appliquent les foncteurs à chaque élément du conteneur (entre
+    les itérateurs de début et de fin)
+  \end{itemize}
+\item
+  Objectif : profiter à la fois de la puissance de la STL et de la
+  qualité des algorithmes fournis (exemple : tri)
+\item Pas moins de 85 algorithmes sont proposés par la STL (et ce sont tous des \textit{templates})
+\item Les algorithmes s'appliquent à tous les conteneurs
+\begin{itemize}
+\item Aux restrictions sur les types d'itérateurs près
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Remplissage d'un vecteur}
+\begin{itemize}
+\item Rappel : nous avons conçu un foncteur \verb|myfill|
+\item Son application donnait lieu à une boucle, limitant son intérêt
+\begin{codeblock}{Version sans algorithme}
+\begin{lstlisting}
+    myfill f(22);
+    for (vector<int>::iterator i=v1.begin() ; i!=v1.end() ; ++i) {
+        *i = f();
+    }
+\end{lstlisting}
+\end{codeblock}
+\item Nouvelle version avec l'utilisation de l'algorithme \verb|generate|
+\begin{codeblock}{Version avec algorithme}
+\begin{lstlisting}
+    myfill f1(22);
+    generate(v1.begin(),v1.end(),f1);
+\end{lstlisting}
+\end{codeblock}
+\item Utilisation des itérateurs obligatoire (plus puissant)
+\begin{itemize}
+\item \textbf{Tous les algorithmes utiliseront des itérateurs plutôt que des conteneurs}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Remplissage aléatoire et comptage}
+\begin{itemize}
+\item On veut écrire un code qui remplit un vecteur de façon aléatoire et qui compte le nombre de fois où apparait un nombre donné
+%\item Foncteur de remplissage aléatoire
+\pause\begin{codeblock}{classe \texttt{randomfill}}
+\begin{lstlisting}
+class randomfill {
+private:
+    int max;
+public:
+    randomfill(int m) : max(m) {}
+    int operator()() {
+        return rand()%max;
+    }
+};
+\end{lstlisting}
+\end{codeblock}
+%\item Utilisation des algorithmes \verb|generate| et \verb|count|
+\pause\begin{codeblock}{Code d'utilisation}
+\begin{lstlisting}
+    vector<int> v2(100);
+    randomfill rf(15);
+    generate(v2.begin(),v2.end(),rf);
+    cout << "v2 contient " << count(v2.begin(),v2.end(),2) << " fois le nombre 2" << endl;
+\end{lstlisting}
+\end{codeblock}
+%\begin{block}{Résultat}
+%{\tiny
+%\begin{verbatim}
+%v2 contient 6 fois le nombre 2
+%\end{verbatim}
+%}
+%\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Utilisation des prédicats}
+\begin{itemize}
+\item Écrire un foncteur qui vérifie si une chaîne de caractère contient une voyelle. Compter combien de chaines d'un conteneur contiennent une voyelle avec  \verb|count_if| \urldoc{http://www.cplusplus.com/reference/algorithm/count_if/}
+\end{itemize}
+\pause\begin{codeblock}{Foncteur pour vérifier si un caractère est une voyelle}
+\begin{lstlisting}
+class isvowel {
+public:
+    bool operator()(char c) {
+        if (c == 'a' || c == 'e' || c == 'y' || c == 'u' || c == 'i' || c == 'o') {
+            return true; }
+        else { return false; }
+    }
+};
+\end{lstlisting}
+\end{codeblock}
+\pause\begin{codeblock}{Foncteur pour vérifier si une chaine contient une voyelle}
+\begin{lstlisting}
+class containsvowel {
+public:
+    bool operator()(string const &s) {
+        return any_of(s.begin(), s.end(), isvowel());
+    }
+};
+\end{lstlisting}
+\end{codeblock}
+
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Utilisation des prédicats}
+\begin{codeblock}{Test du foncteur \texttt{containsvowel}}
+\begin{lstlisting}
+    containsvowel cv;
+    cout << (cv("ghjg") ? "voyelle" : "pas de voyelle") << endl;
+    cout << (cv("fe(rgfgt") ? "voyelle" : "pas de voyelle") << endl;
+\end{lstlisting}
+\end{codeblock}
+\pause
+\begin{block}{Résultat}
+{\tiny
+\begin{verbatim}
+pas de voyelle
+voyelle
+\end{verbatim}}
+\end{block}
+\pause\begin{codeblock}{Application à un conteneur}
+\begin{lstlisting}
+    list<string> ls;
+    ls.push_back("kfkgike");
+    ls.push_back("jfjgg");
+    ls.push_back("i");
+    ls.push_back("ayrud");
+    cout << "nb chaine avec voyelle : " << count_if(ls.begin(),ls.end(),cv);
+\end{lstlisting}
+\end{codeblock}
+\pause
+\begin{block}{Résultat}
+{\tiny
+\begin{verbatim}
+3
+\end{verbatim}}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Autres algorithmes d'utilisation courante (1/2)}
+\begin{itemize}
+\item Au delà des opérations déjà contenues dans les conteneurs, on trouve des prédicats pour les opérations courantes
+\item Recherche
+\begin{itemize}
+\item \texttt{find} \urldoc{http://www.cplusplus.com/reference/algorithm/find/} pour faire une recherche (s'utilise comme \texttt{count}))
+\item \verb|find_if| \urldoc{http://www.cplusplus.com/reference/algorithm/find_if/} qui permet d'utiliser un foncteur qui précise ce qu'on cherche
+\end{itemize}
+\item Minimum et maximum
+\begin{itemize}
+\item \verb|min_element| \urldoc{http://www.cplusplus.com/reference/algorithm/min_element/} permet de trouver le minimum d'un conteneur
+\end{itemize}
+\item Tri
+\begin{itemize}
+\item \verb|sort| \urldoc{http://www.cplusplus.com/reference/algorithm/sort/} pour un tri sur des conteneurs avec \textit{random access iterators}, utilise l'opérateur \verb|<| ou un comparateur dédié si utilisé avec 3 arguments
+\item \verb|stable_sort| \urldoc{http://www.cplusplus.com/reference/algorithm/stable_sort/} pour un tri stable
+\item \verb|is_sorted| \urldoc{http://www.cplusplus.com/reference/algorithm/is_sorted/} qui vérifie si un conteneur est trié
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+% il faudrait mentionner les merger et le foreach
+\begin{frame}[fragile]\frametitle{Autres algorithmes d'utilisation courante (2/2)}
+\begin{itemize}
+\item Application d'une fonction à un conteneur : \verb|for_each| \urldoc{http://www.cplusplus.com/reference/algorithm/for_each/}
+\begin{itemize}
+\item \verb|for_each| a l'avantage de s'utiliser avec un foncteur ou une simple fonction
+\end{itemize}
+\item \verb|transform| \urldoc{http://www.cplusplus.com/reference/algorithm/transform/} qui permet de travailler sur deux conteneurs à la fois (par exemple pour additionner des vecteurs terme à terme)
+\begin{codeblock}{Exemple}
+\begin{lstlisting}
+    vector<int> a(50),b(50),c(50);
+    generate(a.begin(), a.end(), randomfill(10));
+    generate(b.begin(),b.end(), randomfill(10));
+    transform(a.begin(),a.end(),b.begin(),c.begin(),plus<int>());
+\end{lstlisting}
+\end{codeblock}
+\begin{itemize}
+\item Remarque : on peut utiliser des objets sans les nommer : \verb|plus<int>()|
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Les flux}
+
+\begin{frame}{Introduction}
+\begin{itemize}
+\item Les flux (flots) sont utilisés par C++ pour les entrées/sorties, que ce soit sous forme de fichier, d'accès réseau ou d'interaction avec l'utilisateur (écran, clavier)
+\item Depuis la première année, on manipule un outil bizarre : \texttt{cout} (et \texttt{cin})
+\item Rien à voir (à première vue) : il existe différences catégories d'itérateurs (accès aléatoires, bidirectionnels...)
+\item Un flux (flot de données) est une séquence sur laquelle on ne peut qu'avancer (i.e. sur laquelle un itérateur sera unidirectionnel)
+\item De plus, il y aura certaines restrictions en lecture/écriture sur les itérateurs de flux
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{cout} et itérateurs}
+\begin{codeblock}{Etudions ce morceau de code}
+\begin{lstlisting}
+#include <iostream>
+#include <iterator>
+using namespace std;
+
+int main() {
+    ostream_iterator<double> it(cout);
+    *it = 22.5;
+    *it = 2.454;
+
+}
+\end{lstlisting}
+\end{codeblock}
+\begin{block}{Résultat}
+{\tiny
+\begin{verbatim}
+22.52.454[mac-infmat05:optionRV/CPLUS/code] moreau%
+\end{verbatim}
+}
+\end{block}
+\begin{itemize}
+\item des \texttt{include} sans surprise
+\item notation curieuse pour les itérateurs (sans \verb|::|)
+\item présence du type paramétrique \textit{a posteriori}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{cout} et itérateurs}
+\begin{itemize}
+\item Il manque un espace. Le 2ème argument précise le délimiteur
+\begin{lstlisting}
+    ostream_iterator<double> it(cout," ");
+\end{lstlisting}
+\item Si on utilise \verb|ofstream| au lieu de \verb|ostream|, on peut écrire dans un fichier
+\item Plus intéressant, la lecture dans un fichier se fait avec \verb|ifstream|
+\begin{itemize}
+\item NB : on pourrait se passer des itérateurs (pour l'instant)
+\end{itemize}
+\begin{codeblock}{Lecture dans un fichier}
+\begin{lstlisting}
+    ifstream inf("data.txt");
+    istream_iterator<double> itf(inf);
+    istream_iterator<double> the_end;
+
+    int cpt = 0;
+    while (itf != the_end) {
+        cout << "valeur numero " << cpt << " : " << *itf << endl;
+        *itf++; cpt++;
+    }
+\end{lstlisting}
+\end{codeblock}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Le retour des algorithmes}
+\begin{itemize}
+\item Cas d'utilisation typique : lecture d'un fichier de valeurs réelles sur lequel on va effectuer des traitements statistiques
+\item Utilisation de l'algorithme \verb|copy|
+\begin{codeblock}{Lecture d'un vecteur sans boucle}
+\begin{lstlisting}
+    vector<double> v(10);
+    ifstream inf2("data.txt");
+    istream_iterator<double> itf2(inf2);
+    copy(itf2,the_end,v.begin());
+    copy(v.begin(),v.end(),ostream_iterator<double>(cout,"--"));
+\end{lstlisting}
+\end{codeblock}
+\pause\begin{block}{Résultat}
+{\tiny
+\begin{verbatim}
+12.4--24.45--23.455--33.22--45.556--0--0--0--0--0--
+\end{verbatim}
+}
+\end{block}
+\pause
+\item Problème : le vecteur est pré-dimensionné
+\item Solution : remplacer l'itérateur par un \verb|back_insert_iterator<vector<double> >|
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Flux et algorithmes}
+\begin{codeblock}{Nouvelle version}
+\begin{lstlisting}
+    vector<double> v;
+    ifstream inf2("data.txt");
+    istream_iterator<double> itf2(inf2);
+    back_insert_iterator<vector<double> > it2(v);
+    copy(itf2,the_end,it2);
+    copy(v.begin(),v.end(),ostream_iterator<double>(cout,"--"));
+\end{lstlisting}
+\end{codeblock}
+\pause\begin{block}{Résultat}
+{\tiny
+\begin{verbatim}
+12.4--24.45--23.455--33.22--45.556--
+12.4--23.455--24.45--33.22--45.556--
+\end{verbatim}
+}
+\end{block}
+\begin{itemize}
+\item On peut utiliser le mécanisme des algorithmes sur les itérateurs de flux \textbf{sans} charger tout un fichier en mémoire
+\item Exercice : donner le max d'un fichier de réels en \textbf{deux} lignes de code !
+\end{itemize}
+\begin{codeblock}{Réponse}
+\begin{lstlisting}
+    ifstream if3("data.txt");
+    cout << *max_element(istream_iterator<double>(if3),the_end) << endl;
+\end{lstlisting}
+\end{codeblock}
+\end{frame}
+
+\subsection{Cas particulier : flux et chaines de caractères}
+
+\begin{frame}[fragile]
+\frametitle{Flux et itérateurs de chaines de caractères}
+\begin{itemize}
+\item Jusque là, on s'est contenté de \verb|[]| et de \verb|+| pour manipuler les chaines
+\item Flux chaines de caractères : \verb|ostringstream| et \verb|istringstream|
+\begin{itemize}
+\item On récupère la chaine construite avec la méthode \verb|str()|
+\end{itemize}
+\begin{codeblock}{Exemple}
+\begin{lstlisting}
+    ostringstream fl;
+    fl << "une chaine " << 3.14 ;
+\end{lstlisting}
+\end{codeblock}
+\item Les chaines contiennent également des itérateurs
+%\begin{codeblock}{Foncteur de mise en majuscule}
+%\begin{lstlisting}
+%class toupperfct {
+%public:
+%    char operator()(char c) const {
+%        return toupper(c);
+%    }
+%};
+%\end{lstlisting}
+%\end{codeblock}
+\begin{codeblock}{Mise en majuscules d'une chaine de caractères}
+\begin{lstlisting}
+class toupperfct {
+public:
+    char operator()(char c) const {
+        return toupper(c);
+    }
+};
+int main() {
+    string ch("Ceci est une chaine");
+    transform(ch.begin(), ch.end(), ch.begin(), toupperfct());
+    cout << ch << endl;
+}
+\end{lstlisting}
+\end{codeblock}
+\end{itemize}
+\end{frame}

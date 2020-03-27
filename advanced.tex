@@ -1,0 +1,237 @@
+% tout ce qui sort un peu du cadre
+
+\input{templates}
+
+\subsection{Les conversions de type}
+
+\begin{frame}[fragile]\frametitle{Conversion de type en C}
+\begin{itemize}
+\item En C, on utilise l'opérateur \texttt{(} \textit{type} \texttt{)} pour effectuer une conversion d'un type vers un autre
+\begin{lstlisting}
+int z = 12;
+float a = (float) z;
+ClasseQuelconque *q = new ClasseDerivee();
+ClasseDerivee *r = (ClasseDerivee *) q; // downcasting
+\end{lstlisting}
+\item On a vu que cela pouvait être dangereux
+\begin{lstlisting}
+    int a[10];
+    float *b;
+    b = (float *)((void *) a);
+\end{lstlisting}
+\item C++ distingue 4(+1) types de conversion
+\begin{itemize}
+\item \textit{la conversion implicite}, i.e. \verb|short a = 2000; int b =a;|
+\item La conversion \textbf{statique} de types
+\item La \textbf{ré-interprétation} de données vers un autre type
+\item la \textit{conversion} d'un objet \textbf{constant} vers un objet non constant
+\item la conversion \textbf{dynamique} de types
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{La conversion implicite}
+\begin{itemize}
+\item C'est ce qui se passe quand on ne précise rien
+\item \structure{Promotion} : d'un type vers un type plus large, i.e. qui inclut le type d'origine
+\begin{itemize}
+\item de \texttt{short} vers \texttt{int}, de \texttt{float} vers \texttt{double}
+\end{itemize}
+\item Dans l'autre sens, cela \underline{induit une perte de précision}
+\begin{itemize}
+\item Cela devrait générer un avertissement de la part du compilateur (java génère même une erreur)
+\item Cet avertissement peut être évité en faisant une conversion explicite
+\end{itemize}
+\item Règles générales
+\begin{itemize}
+\item  pointeur \textit{null} $\longrightarrow$ tout type de pointeur
+\item  pointeur de tous types $\longrightarrow$ pointeur void*
+\item \textit{upcast} : un pointeur sur une classe dérivée peut être converti vers un pointeur d'une classe dont il hérite
+\end{itemize}
+\end{itemize}
+\end{frame}
+\subsubsection{Opérateur \texttt{static\_cast}}
+
+\begin{frame}[fragile]
+\frametitle{\texttt{static\_cast}}
+\begin{itemize}
+\item Syntaxe : \textit{type} \textit{id} \verb|= static_cast<|\textit{type}\verb|>|\verb|(|\textit{exp}\verb|)|
+\item Exemple
+\begin{lstlisting}
+    double d = 561.6516516;
+    float f1 = static_cast<float>(d);
+
+    double * ptr1 = new double;
+    void * ptr2 = ptr1;
+    double *ptr3 = static_cast<double*>(ptr2);
+    double *ptr4 = ptr2;
+\end{lstlisting}
+\begin{block}{Erreur de compilation}
+{\tiny
+\begin{verbatim}
+cast.cxx:10:13: error: cannot initialize a variable of type 'double *' with an lvalue of type 'void *'
+    double *ptr4 = ptr2;
+            ^      ~~~~
+\end{verbatim}
+}
+\end{block}
+\item \textcolor{red}{Attention} : \verb|static_cast| ne s'utilise que pour des types compatibles, qui n'impliquent pas de ré-interprétation des données
+\begin{itemize}
+\item Pas question de convertir un \verb|double *| vers un \verb|float *|
+\item objets : s'applique au surclassement et au sousclassement (si possible)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsubsection{Opérateur \texttt{reinterpret\_cast}}
+
+\begin{frame}[fragile]
+\frametitle{\texttt{reinterpret\_cast}}
+\begin{itemize}
+\item \verb|reinterpret_cast| fait la même chose que \verb|static_cast| mais y ajoutant une \struc{ré-interprétation} \textit{a posteriori} des données
+\item Tous les types d'origine et de destination sont autorisés, mais ce n'est valable qu'à la compilation
+\item En réalité \verb|reinterpret_cast| fait une copie binaire d'un type vers l'autre
+\begin{itemize}
+\item Aucune garantie, suppose la compatibilité binaire des deux classes
+\item Absolument pas portable
+\end{itemize}
+\begin{codeblock}{Exemple "théorique"}
+\begin{lstlisting}
+class A { ... };
+class B { ... };
+
+A *a = new A;
+B *b = reinterpret_cast<B*>(a);
+\end{lstlisting}
+\end{codeblock}
+\end{itemize}
+\end{frame}
+
+\subsubsection{Opérateur \texttt{const\_cast}}
+
+\begin{frame}[fragile]
+\frametitle{\texttt{const\_cast}}
+\begin{itemize}
+\item \verb|const_cast| sert à modifier des valeurs déclarées \verb|const| !
+\item Son utilisation est \alert{plus que dangeureuse} et doit donc être extrêmement réduite !
+\begin{codeblock}{Exemple "convenable"}
+\begin{lstlisting}
+void print (char * str)
+{
+  cout << str << '\n';
+}
+
+int main () {
+  const char * c = "sample text";
+  print ( const_cast<char *> (c) );
+  return 0;
+}
+\end{lstlisting}
+\end{codeblock}
+\pause \item Il serait néanmoins plus convenable de déclarer \verb|print() const|
+\end{itemize}
+\end{frame}
+
+\subsubsection{Opérateur \texttt{dynamic\_cast}}
+
+\begin{frame}[fragile]
+\frametitle{\texttt{dynamic\_cast}}
+\begin{itemize}
+\item L'opérateur le plus utile avec \verb|static_cast| : il est utilisé pour les pointeurs (et les références) sur des objets
+\item Son utilisation est interdite avec les autres types de données
+\item Utilisation : sur et sous-classement des pointeurs vers des objets en vue de la mise en \oe uvre du polymorphisme
+\item Intérêt pour le sousclassement : si RTTI est activé, le sousclassement ne sera effectué que si la conversion est valide
+\begin{itemize}
+\item en cas d'échec renvoie \verb|null| pour un pointeur
+\item en cas d'échec lève une exception \verb|bad_cast| pour une référence
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exemple d'utilisation de \texttt{dynamic\_cast}}
+\begin{columns}
+\begin{column}{.48\textwidth}
+\begin{codeblock}{classe \texttt{quelconque}}
+\begin{lstlisting}
+class quelconque {
+public:
+    virtual void bidon() { }
+};
+\end{lstlisting}
+\end{codeblock}
+\end{column}
+\begin{column}{.48\textwidth}
+\begin{codeblock}{classe \texttt{derivee}}
+\begin{lstlisting}
+class derivee : public quelconque {
+public:
+    void bidon() { }
+};
+\end{lstlisting}
+\end{codeblock}
+\end{column}
+\end{columns}
+\begin{codeblock}{Tests}
+\begin{lstlisting}
+    try {
+        quelconque * pa = new derivee;
+        quelconque * pb = new quelconque;
+        derivee * pc;
+        pc = dynamic_cast<derivee*>(pa);
+        if (pc == NULL) {
+            cout << "echec 1" << endl;
+        }
+        pc = dynamic_cast<derivee*>(pb);
+        if (pc == NULL) {
+            cout << "echec 2" << endl;
+        }
+        *pc = dynamic_cast<derivee&>(*pb);
+    } catch(exception const &e) {
+        cout << "exception: " << e.what() << endl;
+    }
+\end{lstlisting}
+\end{codeblock}
+\end{frame}
+
+\subsection{l'introspection}
+\label{sec:typeid}
+
+\begin{frame}[fragile]\frametitle{Introspection en C++ : \texttt{typeid}}
+\begin{itemize}
+\item Certains langages permettent l'introspection ou la réflexivité : c'est la capacité à examiner ses structures de données internes, à examiner son propre état (voire à le modifier : introspection)
+\item Elle est assez limitée en C++ (sous-entendu par rapport à java)
+\item Utilisation du mot-clé \verb|typeid|
+\begin{itemize}
+\item \verb|typeid(|\textit{expression}\verb|)| renvoie un objet constant de type \verb|type_info|
+\item Les valeurs de \verb|type_info| sont comparables via l'opérateur \verb|==|
+\item On accède au nom d'une classe en utilisant la méthode \verb|type_info::name()|
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]\frametitle{Exemple}
+\begin{codeblock}{Code}
+\begin{lstlisting}
+    try {
+        quelconque *a = new quelconque;
+        quelconque *b = new derivee;
+
+        cout << "a is: " << typeid(a).name() << endl;
+        cout << "b is: " << typeid(b).name() << endl;
+        cout << "*a is: " << typeid(*a).name() << endl;
+        cout << "*b is: " << typeid(*b).name() << endl;
+    } catch (exception& e) { cout << "Exception: " << e.what() << endl; }
+\end{lstlisting}
+\end{codeblock}
+\begin{block}{Résultat (dépendant du compilateur utilisé)}
+{\tiny
+\begin{verbatim}
+a is: P10quelconque
+b is: P10quelconque
+*a is: 10quelconque
+*b is: 7derivee
+\end{verbatim}
+}
+\end{block}
+\end{frame}

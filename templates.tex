@@ -1,0 +1,211 @@
+% tout ce qui concerne les templates
+
+\subsection{Les templates}
+
+\begin{frame}[t]{Les templates : motivation}
+  \begin{itemize}
+    \item Rappel : l'ordinateur est là pour simplifier les tâches répétitives
+    \begin{itemize}
+      \item Cela inclut la programmation elle-même !
+    \end{itemize}
+    \item Source d'inspiration : la classe \texttt{vector<?>}
+    \begin{itemize}
+      \item Elle fonctionne sur tout type de données
+      \item Elle contient des \emph{vrais} types, pas des \texttt{void *}
+      \item Limite les risques d'erreur de manipulation des vecteurs
+    \end{itemize}
+    \item On a croisé ces \texttt{<?>} un peu partout dans la bibliothèque standard
+  \end{itemize}
+\end{frame}
+%--- Next Frame ---%
+
+
+\begin{frame}[fragile]\frametitle{Un premier exemple simple}
+  \begin{itemize}
+    \item On a une fonction classique qui calcule le max de deux entiers
+    \end{itemize}
+\begin{lstlisting}
+  int maximum(int a, int b) {
+  if (a>b) {
+    return a;
+  }
+  else {
+    return b;
+  }
+}
+  \end{lstlisting}
+  \begin{itemize}
+\item On aimerait pouvoir l'appliquer à tout type de données, sans avoir à réécrire la fonction
+\item A supposer qu'on dispose d'un opérateur \texttt{<} sur le type en question
+  \end{itemize}
+\end{frame}
+
+%--- Next Frame ---%
+
+\begin{frame}[fragile]\frametitle{Fonctions template}
+  \begin{itemize}
+    \item Pour créer ces fonctions génériques, on va considérer qu'elles travaillent sur un type abstrait
+    \item type abstrait ici = type pas défini au moment où on écrit le code de la fonction
+    \item On l'appelle souvent \texttt{T}
+    \item On préfixe alors la déclaration de fonction par \texttt{template <typename T>}
+    \item On utilise T comme type générique dans la fonction
+  \end{itemize}
+  \begin{lstlisting}
+    template<typename T> T maximumTemplate(const T& a,const T& b) {
+      if (a>b) {
+        return a;
+      }
+      else {
+        return b;
+      }
+    }
+
+  \end{lstlisting}
+\end{frame}
+% %--- Next Frame ---%
+
+
+\begin{frame}[fragile]\frametitle{Remarques sur l'utilisation}
+  \begin{itemize}
+    \item Il est recommandé de spécifier le type sur lequel on veut instancier la fonction
+    \begin{lstlisting}
+      cout << maximumTemplate<double>(2.4,6.5) << endl;
+      cout << maximumTemplate<int>(2,4) << endl;
+    \end{lstlisting}
+    \item Mais ce n'est pas obligatoire
+    \begin{lstlisting}
+      cout << maximumTemplate(2.4,6.5) << endl;
+    \end{lstlisting}
+      \item Attention aux ambiguités
+      \begin{lstlisting}
+        cout << maximumTemplate(2.4,6) << endl;
+      \end{lstlisting}
+  \end{itemize}
+  {\tiny \begin{verbatim}
+    maximum.cpp:30:34: warning: implicit conversion from 'double' to 'int' changes value from 2.5 to 2
+      [-Wliteral-conversion]
+    cout << maximumTemplate<int>(2.5,4) << endl;
+            ~~~~~~~~~~~~~~~      ^~~
+  \end{verbatim}}
+\end{frame}
+%--- Next Frame ---%
+
+\begin{frame}[fragile]\frametitle{Précautions d'usage}
+  \begin{itemize}
+    \item L'utilisation des templates est encore difficile avec certains compilateurs
+    \item Conséquences
+    \begin{itemize}
+      \item Dans la plupart des cas, il faut tout caser dans les .h
+      \item Les messages d'erreurs des compilateurs peuvent être complexes à comprendre
+    \end{itemize}
+    \item Exemple : si vous utilisez un opérateur surchargé (ne serait-ce que \texttt{=}), tous les types \texttt{T} avec lesquels vous emploierez la fonction devront surcharger \texttt{=}
+    \begin{itemize}
+      \item constructeur par recopie indispensable
+    \end{itemize}
+    \item Rien ne garantit comment sera utilisée votre fonction template
+    \begin{lstlisting}
+      maximumTemplate(string("titi"),string("toto")
+      maximumTemplate<Elephant>(...,...)
+    \end{lstlisting}
+  \end{itemize}
+\end{frame}
+%--- Next Frame ---%
+
+\begin{frame}[fragile]{De la généricité ... mais pas trop !}
+  \begin{itemize}
+    \item On peut spécialiser les fonctions template (comportement particulier pour une classe spécifique) !
+    \item Il suffit de préciser le type sur lequel elle s'applique
+    \begin{lstlisting}
+      template<> Elephant maximumTemplate(const Elephant&a,const Elephant&b) {
+          if (a.getTaille() > b.getTaille()) {
+              return a;
+          }
+          else {
+              return b;
+          }
+    \end{lstlisting}
+    \item utilisation
+    \begin{lstlisting}
+      maximumTemplate<Elephant>(e1,e2);
+    \end{lstlisting}
+    \item Attention à l'ordre de compilation : du plus générique au plus particulier
+  \end{itemize}
+\end{frame}
+%--- Next Frame ---%
+
+\begin{frame}[fragile]\frametitle{Classes template}
+  \begin{itemize}
+    \item Les types paramétriques ne sont pas réservés aux fonctions !
+    \item Exemple : dans la classe \texttt{point}, on peut imaginer avoir besoin de points à coordonnées réelles ou entières
+    \item Pas besoin de faire deux classes !
+    \item On fait alors précéder la déclaration de la classe de \texttt{template<typename T>} où \texttt{T} est le type paramétrique
+    \item Exemple
+    \begin{lstlisting}
+      template<typename T> class point {
+      protected:
+        T x;
+        T y;
+
+      public:
+        point(T x,T y) {
+          this->x = x;
+          this->y = y;
+        }
+
+        // ...
+
+        T getX() const {
+          return this->x;
+        }
+      };
+    \end{lstlisting}
+  \end{itemize}
+\end{frame}
+%--- Next Frame ---%
+
+ %\begin{frame}[fragile]\frametitle{Quelques compléments}
+ %  \begin{itemize}
+ %    \item Méthode de classe déclarée en dehors de la classe
+%     \begin{itemize}
+%       \item Déclaration standard dans la classe
+%       \begin{lstlisting}
+%           T norm2() const ;
+%       \end{lstlisting}
+%       \item Pour la définition, on ajoute le \texttt{template<typename T>} mais aussi le type de la classe
+%       \begin{lstlisting}
+%         template<typename T> T point<T>::norm2() const {
+%           return x*x+y*y;
+%         }
+%       \end{lstlisting}
+%     \end{itemize}
+%  \item utilisation d'une classe template
+ %  \end{itemize}
+  % \end{frame}
+
+\begin{frame}[fragile]\frametitle{Quelques compléments}
+\begin{itemize}
+	\item Méthode en dehors de la classe
+	\begin{itemize}
+		\item Déclaration seule dans la classe
+\begin{lstlisting}
+T norm2() const ;
+\end{lstlisting}
+		\item Code en dehors de la classe
+		\begin{enumerate}
+			\item ajout du \texttt{template<typename T>}
+			\item ajout du type paramétrique après le nom de classe
+		\end{enumerate}
+		\begin{lstlisting}
+		       template<typename T> T point<T>::norm2() const {
+		                  return x*x+y*y;
+		       }
+		\end{lstlisting}
+	\end{itemize}
+	\item Utilisation
+	\begin{lstlisting}
+	  point<double> p1;
+	  point<int> p2(2,2);
+      cout << p2.norm2() << endl;
+	\end{lstlisting}
+\end{itemize}
+\end{frame}

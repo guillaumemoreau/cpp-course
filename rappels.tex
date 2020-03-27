@@ -1,0 +1,214 @@
+% % rappels sur ce qui a été vu en ALGPR
+\subsection{Vos (anciens) premiers pas en C++}
+
+\begin{frame}[fragile]
+\frametitle{Premier programme C++}
+\begin{lstlisting}[language=C++]
+#include <iostream>
+using namespace std;
+
+/* fonction principale du programme
+
+	Elle affiche un message
+*/
+int main() {
+  cout << "hello world" << endl;
+
+  return 0;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Ligne par ligne}
+\begin{itemize}
+\item \texttt{\#include <iostream>} : inclure des fichiers de \textbf{déclaration} d'autres fonctions
+\item \texttt{using namespace std;}: utiliser un espace de nommage, plus tard !
+\item \texttt{/* ... */} définit une zone de commentaires (pas interprétée par le compilateur)
+\item \texttt{int main() $\{$ ... $\}$} : fonction principale, appelée au lancement du programme
+\item \texttt{cout << "hello world" << endl;} : façon \textit{moderne} d'afficher du texte
+\item \texttt{return 0;} : la fonction \textit{main()} est supposée retourner un entier
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Compilation et édition des liens (v1)}
+\begin{itemize}
+\item Compilation : transformation d'un fichier source en code \textit{objet}
+\item Edition des liens : assemblage de plusieurs fichiers objet pour en faire un exécutable (\texttt{.exe} sous Windows, pas d'extension obligatoire sur les autres systèmes)
+\end{itemize}
+\pause \begin{block}{En ligne de commande}
+\begin{verbatim}
+g++ -c premierprog.cxx
+g++ -o premierprog.out premierprog.o
+\end{verbatim}
+\end{block}
+
+\pause \begin{exampleblock}{Exécution}
+\begin{verbatim}
+[mac-infmat05:CPLUS/poly/code] moreau% ./premierprog.out
+hello world
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+\input{makefile}
+
+\subsection{Syntaxe générale du langage C(++)}
+
+\begin{frame}[fragile]
+\frametitle{Commentaires}
+\begin{lstlisting}[language=C++]
+/* Ceci est un commentaire qui peut etre long */
+
+// Ceci est un commentaire d'une ligne
+\end{lstlisting}
+\begin{itemize}
+\item nécessaires (mais pas suffisants) à se remettre dans le code 6 mois plus tard
+\item nécessaires (mais pas suffisants) pour donner son code à quelqu'un d'autre
+\item Éléments de qualité du code (métriques)
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Types de base en C(++)}
+\begin{itemize}
+\item Entiers
+\begin{itemize}
+\item caractères : \verb|char| (entiers sur 8 (?) bits)
+\item entiers classiques : \verb|int|, \verb|short| (16 bits), \verb|long| (32 bits), \verb|long long| (64 bits)
+\item utilisation possible des préfixes \verb|signed| et \verb|unsigned|
+\item il existe aussi des types de taille fixe : \verb|int8_t|, \verb|uint8_t|,... définis dans \verb|stdint.h|
+\end{itemize}
+\item types flottants
+\begin{itemize}
+\item simple précision : \verb|float|
+\item double précision : \verb|double|
+\end{itemize}
+\item Les constantes sont préfixées par \verb|const|
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Enregistrements}
+\begin{itemize}
+\item Définition d'un enregistrement
+\begin{lstlisting}
+struct nomtype {
+	type1 attribut1;
+	...
+	typeN attributN;
+};
+\end{lstlisting}
+\begin{codeblock}{Exemple}
+\begin{lstlisting}
+struct complexe {
+	float re,im;
+};
+\end{lstlisting}
+\end{codeblock}
+\item Déclaration d'une variable de type enregistrement : \verb|nomtype nomvar;|
+\item Accès aux attributs : \verb|nomvar.attributI|
+\item La comparaison directe \verb|==| n'est pas possible, mais la copie (superficielle) est possible avec \verb|=|
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Blocs d'instructions}
+\begin{itemize}
+\item instruction simple \verb|<I> : I;|
+\item Bloc d'instructions \verb|<B> : { I1; ... IN; }|
+\item En C, les déclarations de variables doivent se faire en \textbf{début de bloc}. En C++, on peut les faire n'importe où, mais ce n'est pas recommandé pour autant
+\item Portée des variables : bloc d'instructions dans lequel elles sont déclarées
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Opérateurs}
+\begin{itemize}
+\item Affectation : \verb|=|
+\item Arithmétique :
+\begin{itemize}
+\item addition : \verb|+|
+\item soustraction : \verb|-|
+\item multiplication : \verb|*|
+\item division : \verb|/|
+\item modulo : \verb| %|
+\end{itemize}
+\item Opérateurs raccourcis : \verb|+=,-=,*=,/=|...
+\item Incrémentation, décrémentation : \verb|++| et \verb|--| sous forme préfixe ou suffixe
+\item Opérations sur les bits :
+\begin{itemize}
+\item \verb#&,|,^# : et, ou, ou exclusif
+\item décalages bit à bit : \verb|<<| et \verb|>>|
+\end{itemize}
+\item Opérateur ternaire \verb|(| \textit{condition} \verb|?| \textit{action1} \verb|:| \textit{action2} \verb|)|
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Structures de contrôle}
+\begin{itemize}
+\item Syntaxe 1 : \verb|if (|\textit{condition}\verb|)| \textit{bloc1}
+\item Syntaxe 2 : \verb|if (|\textit{condition}\verb|)| \textit{bloc1} \verb|else| \textit{bloc2}
+\item \alert{Attention} : les parenthèses autour de la condition sont obligatoires
+\item \textit{condition} est une expression de type booléen (\verb|int| en C à l'ancienne qui n'a pas de type de booléen)
+\begin{itemize}
+\item 0 pour faux, n'importe quelle autre valeur est vraie
+\end{itemize}
+\item Opérateurs pour les expressions booléennes
+\begin{itemize}
+\item \verb|&&|, \verb#||#, \verb|!|, \verb|==|, \verb|!=|
+\item ainsi évidemment que \verb|<|, \verb|<=|, \verb|>=|, \verb|>|
+\end{itemize}
+\item Opérateur de sélection : \verb|switch(|\textit{var-num}\verb|) {| \textit{liste de cas} \verb|}|
+\begin{itemize}
+\item cas : \verb|case |\textit{nombre}\verb|:| \textit{liste d'instructions} \verb|break;|
+\item cas par défaut (en dernier) : \verb|default:|  \textit{liste d'instructions}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Structures itératives}
+\begin{itemize}
+\item \verb|while (|\textit{condition}\verb|) {| \textit{liste d'instructions} \verb|}| : répète la liste d'instructions tant que la condition \textit{condition} est vraie
+\begin{itemize}
+\item La condition est évaluée \structure{avant} chaque exécution de la liste d'instructions
+\end{itemize}
+\item \verb|for (|\textit{initialisation} \verb|;| \textit{invariant} \verb|;| \textit{incrément} \verb|) {| \textit{liste d'instructions} \verb|}|
+\begin{itemize}
+\item La liste d'instructions est exécutée tant que l'invariant est vrai (vérifié avant chaque entrée dans la boucle
+\item L'incrément est effectué juste avant de vérifier la condition
+\end{itemize}
+\item \verb|do {| \textit{liste d'instructions} \verb|} while (| \textit{condition} \verb|);|  : répète la liste d'instructions tant que la condition \textit{condition} est vraie
+\begin{itemize}
+\item La condition est évaluée \structure{après} chaque exécution de la liste d'instructions
+\end{itemize}
+\item \verb|break| sort de la structure de répétition correspondante
+\item \verb|continue| passe immédiatement à l'itération suivante
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Fonctions}
+\begin{itemize}
+\item Définition d'une fonction : \textit{typeretour} \verb|nom_fonction(| \textit{liste de paramètres} \verb|) {|  \textit{liste d'instructions }\verb|}|
+\begin{itemize}
+\item liste de paramètres : \textit{type1} \textit{nom1}, ..., \textit{typeN} \textit{nomN}
+\item retour de la fonction : \verb|return| \textit{val}\verb|;|
+\item \textit{val} doit être de type \textit{typeretour} ou omis si \textit{typeretour} \verb|void|
+\item \textit{typeretour} possibles : types simples, structures, pointeurs, \verb|void|
+\item Les paramètres sont des variables locales des fonctions (copie des valeurs passées à l'appel)
+\end{itemize}
+\item Déclaration (prototype, signature)
+\begin{itemize}
+\item \textit{typeretour} \verb|nom_fonction(| \textit{liste de paramètres} \verb|);|
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{La gestion de la mémoire en C}
+
+\input{pointeurs}
