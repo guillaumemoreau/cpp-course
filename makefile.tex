@@ -87,7 +87,7 @@
 \begin{frame}{Syntaxe du \texttt{Makefile}}
 \begin{block}{Ensemble de règles de la forme}
 \texttt{  fichier: fichier1 fichier2 fichier3 ... \\
-  	<TAB>régle de production de fichier \\
+  	<TAB>règle de production de fichier \\
 }\end{block}
 \begin{itemize}
 \item Note : le fichier s'appelle obligatoirement \texttt{Makefile}
@@ -99,6 +99,8 @@
 	\item en fait non, c'est juste celle qui sera vérifiée en premier par \texttt{make}
 \end{itemize}
 \item Ensuite il suffit d'appeler la commande \texttt{make}
+\item \textbf{Attention} il faut impérativement utiliser des tabulations pour les règles de production dans les Makefile
+\item Note : il existe des commandes bien plus complexes et efficaces pour les Makefile, mais il est plus simple d'utiliser des outils de plus haut niveau comme cmake (cf. cours MEDEV)
 \end{itemize}
 \end{frame}
 
