@@ -9,8 +9,8 @@ int main() {
     agence.push_back(new livret(1,0.03));
     agence.push_back(new ccourantremun(1,0.001,1500.0));
 
-   for (list<compteremun*>::iterator i=agence.begin() ; i != agence.end(); i++) {
-        (*i)->calc_interets();
+    for (compteremun* & c : agence) {
+        c->calc_interets();
     }
 
 }

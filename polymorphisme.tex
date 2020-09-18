@@ -375,8 +375,8 @@ void ccourantremun::calc_interets() {
 
 \begin{codeblock}{Calcul des intérêts}
 \begin{lstlisting}
-    for (list<compteremun*>::iterator i=agence.begin() ; i != agence.end(); i++) {
-        (*i)->calc_interets();
+    for (compteremun* & c : agence) {
+        c->calc_interets();
     }
 \end{lstlisting}
 \end{codeblock}
