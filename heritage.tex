@@ -370,6 +370,30 @@ je suis un objet de la classe exheritageB
     \end{center}
   \end{figure}
 \end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Limiter les risques (fonctions virtuelles et c+11) !}
+  \begin{itemize}
+    \item Il arrive qu'on se trompe en redéfinissant une fonction ... ce qui about à une surchage 
+    \item Exemple : fonction déclarée dans la classe mère 
+  \end{itemize}
+  \begin{lstlisting}
+    virtual void toto(int a, float b) const ; 
+  \end{lstlisting}
+  \begin{itemize}
+    \item Erreur classique fonction \emph{redéfinie} dans la classe fille 
+  \end{itemize}
+  \begin{lstlisting}
+    virtual void toto(int a, float b) ; 
+  \end{lstlisting}
+  \begin{itemize}
+    \item Solution : le mot clé \texttt{override} dans la déclaration de la classe fille qui annonce qu'il s'agit d'une redéfinition
+    \item Le compilateur va vérifier que c'est bien le cas
+  \end{itemize}
+  \begin{lstlisting}
+    virtual void toto(int a, float b) const override; 
+  \end{lstlisting}
+\end{frame}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]
