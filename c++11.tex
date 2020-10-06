@@ -1,0 +1,206 @@
+
+\begin{frame}{Nouveautés}
+    \begin{itemize}
+        \item Chaque version de la norme C++ introduit des nouveautés ... plus ou moins implémentées par les compilateurs 
+        \item On se focalise ici uniquement sur les plus directement utilisables (et les plus simples)
+        \item Pour compiler en mode C++11, il faut ajouter l'option \texttt{-std=c++11} au compilateur
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Améliorations quant à la déclaration des types}
+    \begin{itemize}
+        \item \texttt{auto} : permet de ne pas déclarer le type d'une variable qui sera déduit par le compilateur 
+        \item \texttt{decltype} : permet de déclarer le type d'une nouvelle variable en fonction du type d'une variable existante
+        \item On peut aussi déclarer une fonction \texttt{decltype(auto)}, ou plus simplement \texttt{auto} en C++14
+    \end{itemize}
+\begin{lstlisting}
+    vector<int> v1(20);
+
+    for (auto it=v1.begin(); it != v1.end(); it++) {
+        ...
+    }
+
+    decltype(v1) v2;
+
+    // parfois etrange
+    auto p = new auto(3.14159);
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Instruction for in}
+    \begin{itemize}
+        \item Une nouvelle syntaxe pour l'instruction \texttt{for} a été introduite pour effectuer une itération sur un conteneur de la librairie standard 
+        \item Elle existait déjà dans plusieurs compilateurs
+    \end{itemize}
+\begin{lstlisting}
+vector<int> vect;
+
+for (int v : vect) {
+    sum += v;
+}
+\end{lstlisting}
+\begin{itemize}
+    \item qu'on peut alors écrire aussi 
+\end{itemize}
+\begin{lstlisting}
+    for (auto v : vect) {
+        sum += v;
+    }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{emplace\_back}
+    \begin{itemize}
+        \item \texttt{emplace\_back} permet de créer à la volée un élément et de l'insérer dans un vecteur par exemple 
+        \item à utiliser à la place de \texttt{push\_back}
+        \item Limite le nombre de copies et d'appel aux constructeurs
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exemple}
+\begin{lstlisting}
+class Person1 {
+public:
+    string name;
+    int age;
+ 
+    Person1() {
+        cout << "default constructor Person1" << endl;
+        name = "unknown";
+        age = -1;
+    }
+    Person1(string n, int a) : name(n), age(a) {
+      cout << "construct Person1" << endl;
+    } 
+    Person1(const Person1& p) {
+      cout << "copy constructor Person1" << endl;
+      name = p.name;
+      age = p.age;
+    }      
+    Person1& operator=(const Person1& p) {
+      name = p.name;
+      age = p.age;
+      cout << "assign Person1" << endl;
+      return *this;    
+    }   
+    friend ostream& operator<<(ostream& out, Person1& p) {
+      out << p.name << ", " << p.age;
+      return out;
+    }
+};
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Exemple d'utilisation}
+\begin{lstlisting}
+void test1() {
+    vector<Person1> v;
+    cout << endl << "PUSH BACK" << endl;
+    cout << string(40, '-') << endl;
+    cout << "- push back" << endl;
+    v.push_back(Person1("Masha", 5));
+}
+\end{lstlisting}
+\begin{exampleblock}{Exécution}
+\begin{verbatim}
+    PUSH BACK
+    ----------------------------------------
+    - push back
+    construct Person1
+    copy constructor Person1    
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Avec emplace\_back}
+\begin{itemize}
+    \item Ajout d'un constructeur de type move
+\end{itemize}
+\begin{lstlisting}
+    Person1(Person1&& p) : name(std::move(p.name)), age(p.age) {
+        cout << "move Person1  { " << name << ", " << age << " }" << endl;
+      }
+\end{lstlisting}
+\begin{itemize}
+    \item Utilisation
+\end{itemize}
+\begin{lstlisting}
+    void test2() {
+        vector<Person1> v;
+        cout << endl << "EMPLACE BACK" << endl; 
+        cout << string(40, '-') << endl;
+        v.emplace_back(Person1("Masha", 5));
+}    
+\end{lstlisting}
+\begin{exampleblock}{Exécution}
+\begin{verbatim}
+    EMPLACE BACK
+    ----------------------------------------
+    construct Person1
+    move Person1  { Masha, 5 }
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Smart pointers}
+    \begin{itemize}
+        \item La gestion des pointeurs et de la mémoire est le point faible de C(++), d'où l'introduction de nouveaux types 
+        \item \texttt{unique\_ptr<T>} gère un pointeur de façon à ce qu'il n'y ait qu'une seule occurrence valide 
+        \item \texttt{shared\_ptr<T>} gère plusieurs pointeurs sur un même espace mémoire et libère l'espace quand il n'est plus référencé (ressemble aux références java)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{unique\_ptr}
+\begin{lstlisting}
+    unique_ptr<int> p1(new int); 
+
+    *p1 = 2;
+    cout << "p1 = "  << *p1 << endl;
+
+    // ATTENTION
+    unique_ptr<int> p2(p1.get());
+\end{lstlisting}
+\begin{exampleblock}{Exécution}
+    {\tiny}
+    \begin{verbatim}        
+    p1 = 2
+    smart_pointers(96785,0x10d538dc0) malloc: *** error for object 0x7f9769405890: pointer being freed was not allocated
+    smart_pointers(96785,0x10d538dc0) malloc: *** set a breakpoint in malloc_error_break to debug
+    [1]    96785 abort      ./smart_pointers    
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{unique\_ptr}
+\begin{lstlisting}
+    // move pour transferer a une nouvelle reference 
+    unique_ptr<int> p2(std::move(p1)); 
+
+    // on ne peut plus l'utiliser sous l'ancien nom 
+     cout << "p1 = "  << *p1 << endl;
+\end{lstlisting}
+\begin{exampleblock}{Exécution}
+{\tiny
+\begin{verbatim}
+[1]    2961 segmentation fault  ./smart_pointers
+\end{verbatim}
+}
+\end{exampleblock}
+
+\begin{lstlisting}
+    *p2 = 7;
+    cout << "p2 = " << *p2 << endl;
+    // on rend la reference a p1
+    p1 = std::move(p2);
+    cout << "p1 = " << *p1 << endl;
+\end{lstlisting}    
+\end{frame}
