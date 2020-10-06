@@ -204,3 +204,29 @@ void test1() {
     cout << "p1 = " << *p1 << endl;
 \end{lstlisting}    
 \end{frame}
+
+\begin{frame}[fragile]
+\frametitle{shared\_ptr}
+\begin{lstlisting}
+    // partie sur les smart pointers 
+    shared_ptr<int> x1(new int);
+    shared_ptr<int> x2(x1);
+    shared_ptr<int> x3(x1);
+ 
+    *x1 = 1;
+    *x2 = 2;
+    *x3 = 3;
+    cout << "int is referenced " << x1.use_count() << " time(s)" << endl;
+\end{lstlisting}  
+\begin{exampleblock}{Exécution}
+{\tiny
+\begin{verbatim}
+int is referenced 3 time(s)
+\end{verbatim}
+}
+\end{exampleblock}
+\begin{itemize}
+    \item Permet de limiter les fuites de mémoire 
+    \item Pas si facile à utiliser quand on l'utilise avec des shared pointers de pointeurs...
+\end{itemize}
+\end{frame}
