@@ -107,6 +107,7 @@ void test1() {
 }
 \end{lstlisting}
 \begin{exampleblock}{Exécution}
+{\tiny 
 \begin{verbatim}
     PUSH BACK
     ----------------------------------------
@@ -114,6 +115,7 @@ void test1() {
     construct Person1
     copy constructor Person1    
 \end{verbatim}
+}
 \end{exampleblock}
 \end{frame}
 
@@ -139,12 +141,14 @@ void test1() {
 }    
 \end{lstlisting}
 \begin{exampleblock}{Exécution}
+{\tiny 
 \begin{verbatim}
     EMPLACE BACK
     ----------------------------------------
     construct Person1
     move Person1  { Masha, 5 }
 \end{verbatim}
+}
 \end{exampleblock}
 \end{frame}
 
@@ -169,13 +173,14 @@ void test1() {
     unique_ptr<int> p2(p1.get());
 \end{lstlisting}
 \begin{exampleblock}{Exécution}
-    {\tiny}
+    {\tiny
     \begin{verbatim}        
     p1 = 2
     smart_pointers(96785,0x10d538dc0) malloc: *** error for object 0x7f9769405890: pointer being freed was not allocated
     smart_pointers(96785,0x10d538dc0) malloc: *** set a breakpoint in malloc_error_break to debug
     [1]    96785 abort      ./smart_pointers    
 \end{verbatim}
+    }
 \end{exampleblock}
 \end{frame}
 
